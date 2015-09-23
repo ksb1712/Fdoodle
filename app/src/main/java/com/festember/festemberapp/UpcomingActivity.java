@@ -67,7 +67,7 @@ public class UpcomingActivity extends AppCompatActivity {
     String[] evlastupdate;
 
 
-    int no,t,ch=0,catech=0;
+    int no,t,ch=-1,catech=-1;  //Updated for dynamic spinnerview
     int timelimit=1;
 
     private RecyclerView mRecyclerView;
@@ -80,6 +80,50 @@ public class UpcomingActivity extends AppCompatActivity {
     int date=26;
     String noentrytest="No ongoing/upcoming events.\nWhy not visit the FOODSTALLS instead?";
     private Read_write_file fileOps;
+    
+    //new data for dynamic spinnerviews
+    String[] venues={"barn"};
+    String[] cates={"dramatics"};
+    int co1=1,co2=1;
+    Spinner spinner ;
+    Spinner spinnertime;
+    Spinner spinnercate;
+    ArrayAdapter<String> spadapter;
+    ArrayAdapter<String> caadapter;
+    
+    //Updated for dynamic spinnerview
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        /*savedInstanceState.putInt(STATE_SCORE, mCurrentScore);
+        savedInstanceState.putInt(STATE_LEVEL, mCurrentLevel);*/
+
+
+
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("spinner1", spinner.getSelectedItemPosition());
+        savedInstanceState.putInt("spinner2", spinnertime.getSelectedItemPosition());
+        savedInstanceState.putInt("spinner3", spinnercate.getSelectedItemPosition());
+    }
+    
+    //Updated for dynamic spinnerview
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+
+
+        if (savedInstanceState != null) {
+            ch = savedInstanceState.getInt("spinner1") - 1;
+            timelimit = savedInstanceState.getInt("spinner2") + 1;
+            catech = savedInstanceState.getInt("spinner3") - 1;
+        }
+
+
+
+
+
+    }
+
 
 
     protected void sort(String[][] tevents,  int[][] ttime,  int o){
@@ -148,135 +192,30 @@ public class UpcomingActivity extends AppCompatActivity {
 
                 catechcheck=0;
                 chcheck=0;
+                
+                
+                //Updated for dynamic spinnerview
 
-
-                switch (catech) {
-
-                    case 0:
-                        catechcheck = 1;
-                        break;
-
-                    case 1:
-                        if (tevents[k][2].equals("dance")) {
-                            catechcheck=1;
-
-                        }
-
-                        break;
-
-                    case 2:
-                        if (tevents[k][2].equals("music")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-
-                    case 3:
-                        if (tevents[k][2].equals("shruthilaya")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-                    case 4:
-                        if (tevents[k][2].equals("dramatics")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-                    case 5:
-                        if (tevents[k][2].equals("cinematics")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-                    case 6:
-                        if (tevents[k][2].equals("fashionitas")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-                    case 7:
-                        if (tevents[k][2].equals("gaming")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-                    case 8:
-                        if (tevents[k][2].equals("arts")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-                    case 9:
-                        if (tevents[k][2].equals("hindilits")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-                    case 10:
-                        if (tevents[k][2].equals("englishlits")||tevents[k][2].equals("englits")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-                    case 11:
-                        if (tevents[k][2].equals("tamillits")) {
-
-                            catechcheck=1;
-                        }
-
-                        break;
-
+                if(catech==-1){
+                    catechcheck=1;
                 }
 
 
-                switch (ch) {
-
-                    case 0:
-                        chcheck=1;
-                        break;
-
-                    case 1:
-                        if (tevents[k][1].equals("barn")||tevents[k][1].equals("Barn")) {
-
-                            chcheck=1;
-                        }
-
-                        break;
-
-                    case 2:
-                        if (tevents[k][1].equals("sac")) {
-
-                            chcheck=1;
-                        }
-
-                        break;
-
-                    case 3:
-                        if (tevents[k][1].equals("lhc")) {
-
-                            chcheck=1;
-                        }
-
-                        break;
-
-                    case 4:
-                        if (tevents[k][1].equals("eee")) {
-
-                            chcheck=1;
-                        }
-
-                        break;
+                else if((tevents[k][2].equalsIgnoreCase(cates[catech]))){
+                    catechcheck=1;
                 }
+                
+                
+                if(ch==-1){
+                    chcheck=1;
+                }
+
+                else if((tevents[k][1].equalsIgnoreCase(venues[ch]))){
+                    chcheck=1;
+                }
+
+
+                
                 if(chcheck==1&&catechcheck==1) {
                     store[t] = tevents[k];
                     prtime[t] = ttime[k];
@@ -325,6 +264,11 @@ public void netparse(String response)
         evendtime=new String[no];
         evdate=new String[no];
         evlastupdate=new String[no];
+        //Updated for dynamic spinnerview
+        String[] temp1=new String[no];
+        String[] temp2=new String[no];
+        co1=0;
+        co2=0;
 
 
 
@@ -359,6 +303,42 @@ public void netparse(String response)
             else{
                 temptime[i][3] = temptime[i][0]+1 ;
             }
+            
+            //Updated for dynamic spinnerview
+            
+            if(i==0){
+                    temp1[0]=tempeve[0][1];
+                    temp2[0]=tempeve[0][2];
+                    co1=1;
+                    co2=1;
+                    }
+
+            int ca=0;
+            for(int j=0;j<co1;j++) {
+                                    if ((tempeve[i][1].equalsIgnoreCase(temp1[j]))) {
+                                                                                    ca++;
+                                                                                    break;
+                                                                                    }
+
+                                    }
+            if (ca == 0) {
+                           temp1[co1] = tempeve[i][1];
+                           co1++;
+                         }
+
+            ca=0;
+           for(int j=0;j<co2;j++) {
+                                   if ((tempeve[i][2].equalsIgnoreCase(temp2[j]))) {
+                                       ca++;
+                                       break;
+                                   }
+
+                               }
+            if (ca == 0) {
+                           temp2[co2] = tempeve[i][2];
+                                   co2++;
+                       }
+
 
 
 
@@ -366,6 +346,17 @@ public void netparse(String response)
 
 
         }
+        
+        //Updated for dynamic spinnerview
+        
+        venues=new String[co1];
+        cates=new String[co2];
+        for(int j=0;j<co1;j++){
+                                venues[j]=temp1[j];
+                            }
+        for(int j=0;j<co2;j++){
+                                cates[j]=temp2[j];
+                            }
 
 
 
@@ -396,9 +387,19 @@ public void netparse(String response)
 
                         netparse(response);
                         pDialog.dismiss();
+                        
+                        
+                        //Updated for dynamic spinnerview
+
+
+                        handlerecycle();
 
 
                         optsel();
+
+                        
+
+                        optsel();//Dont delete the extra ones, its on purpose
 
                     }
                 },
@@ -433,7 +434,14 @@ public void netparse(String response)
 
 
     public void optsel(){
-        sort(tempeve, temptime, no);
+        
+        
+        //Updated for dynamic spinnerview
+        if(tempeve!=null) {
+
+
+            sort(tempeve, temptime, no);
+        }
         RecycleList adapter = new
                 RecycleList(UpcomingActivity.this, present,prtime,t,Number);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclelist);
@@ -448,6 +456,179 @@ public void netparse(String response)
         else{
             texx.setText(null);
         }
+
+    }
+    
+    
+    //Updated for dynamic spinnerview
+    
+    public void handlerecycle(){
+        String[] items=new String[co1+1];;//[] { "All", "Barn", "SAC","LHC","EEE" };
+        String[] tempa =new String[co1+1];
+        items[0]="All";
+        tempa[0]="All";
+        int c=1;
+        if(venues!=null) {
+
+            for (int i = 0; i < co1; i++) {
+                items[i + 1] = propergram(venues[i]);
+            }
+        }
+        spinner = (Spinner) findViewById(R.id.recyclespinner);
+
+           spadapter = new ArrayAdapter<String>(
+                    this, R.layout.spinnerstyle, items);
+
+
+
+            spinner.setAdapter(spadapter);
+        spinner.setSelection(ch + 1);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                ch = position - 1;
+
+                //parseevents();
+                optsel();
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+
+                optsel();
+
+            }
+
+
+        });
+
+
+
+
+
+        spinnertime = (Spinner) findViewById(R.id.recyclespinnertime);
+        String[] itemstime = new String[] { "1 hour", "2 hours"};
+        ArrayAdapter<String> tiadapter = new ArrayAdapter<String>(
+                this, R.layout.spinnerstyle, itemstime);
+
+
+        spinnertime.setAdapter(tiadapter);
+        spinnertime.setSelection(timelimit - 1);
+        spinnertime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                switch (position) {
+
+                    case 0:
+                        timelimit = 1;
+                        break;
+
+                    case 1:
+                        timelimit = 2;
+                        break;
+                }
+
+
+                //parseevents();
+                optsel();
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+
+                optsel();
+
+            }
+        });
+
+
+
+
+        spinnercate = (Spinner) findViewById(R.id.recyclespinnercate);
+        String[] itemscate = new String[co2+1]; //{ "All","Dance", "Music", "Shruthilaya","Dramatics","Cinematics","Fashionitas","Gaming","Arts","Hindi Lits","English Lits","Tamil Lits"};
+        itemscate[0]="All";
+        if(cates!=null) {
+            for (int i = 0; i < co2; i++) {
+                itemscate[i + 1] = propergram(cates[i]);
+            }
+        }
+
+            caadapter = new ArrayAdapter<String>(
+                    this, R.layout.spinnerstyle, itemscate);
+
+
+        spinnercate.setAdapter(caadapter);
+        spinnercate.setSelection(catech+1);
+        spinnercate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                catech=position-1;
+
+                //parseevents();
+                optsel();
+                //Toast.makeText(getApplicationContext(), tempeve[0][2], Toast.LENGTH_SHORT).show();
+
+
+
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+
+                optsel();
+
+            }
+        });
+
+    }
+    
+    
+    
+    //Updated for dynamic spinnerview
+    
+    public String propergram(String word){
+
+
+        // word.toLowerCase();
+        String[] tempstr =word.split("_");
+        String tempstr2;
+
+        for(int i=0;i<tempstr.length;i++){
+            if((tempstr[i].charAt(0))>='A'&&(tempstr[i].charAt(0))<='Z') {
+                tempstr2 = (String.valueOf(tempstr[i].charAt(0)));
+            }
+            else {
+                tempstr2 = (String.valueOf(tempstr[i].charAt(0))).toUpperCase();
+            }
+            tempstr[i] = tempstr2.concat(tempstr[i].substring(1));
+            if (i != 0) {
+                word=word.concat(" ").concat(tempstr[i]);
+            } else {
+                word = tempstr[i];
+            }
+
+        }
+        return word;
+
 
     }
 
@@ -486,6 +667,7 @@ public void netparse(String response)
         pDialog.setCancelable(false);*/
 
         parseevents();
+        
         for(int i=0;i<no;i++) {
 
             Eve[i].name = tempeve[i][0];
@@ -499,119 +681,14 @@ public void netparse(String response)
             Eve[i].last_updated=Time.valueOf(evlastupdate[i]);
             Eve[i].desc=" ";
         }
+        
+        
+        //Deleted for dynamic spinnerview
+        
 
+    
 
-
-
-
-
-
-        Spinner spinner = (Spinner) findViewById(R.id.recyclespinner);
-        String[] items = new String[] { "All", "Barn", "SAC","LHC","EEE" };
-        ArrayAdapter<String> spadapter = new ArrayAdapter<String>(
-                this, R.layout.spinnerstyle, items);
-
-
-        spinner.setAdapter(spadapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-                ch=position;
-
-                //parseevents();
-                optsel();
-
-
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-
-
-
-
-                optsel();
-
-            }
-
-
-        });
-
-        Spinner spinnertime = (Spinner) findViewById(R.id.recyclespinnertime);
-        String[] itemstime = new String[] { "1 hour", "2 hours"};
-        ArrayAdapter<String> tiadapter = new ArrayAdapter<String>(
-                this, R.layout.spinnerstyle, itemstime);
-        spinnertime.setAdapter(tiadapter);
-        spinnertime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-
-                switch (position) {
-
-                    case 0:
-                        timelimit=1;
-                        break;
-
-                    case 1:
-                        timelimit=2;
-                        break;
-                }
-
-
-                //parseevents();
-                optsel();
-
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-
-
-
-                optsel();
-
-            }
-        });
-
-        Spinner spinnercate = (Spinner) findViewById(R.id.recyclespinnercate);
-        String[] itemscate = new String[] { "All","Dance", "Music", "Shruthilaya","Dramatics","Cinematics","Fashionitas","Gaming","Arts","Hindi Lits","English Lits","Tamil Lits"};
-        ArrayAdapter<String> caadapter = new ArrayAdapter<String>(
-                this, R.layout.spinnerstyle, itemscate);
-        spinnercate.setAdapter(caadapter);
-        spinnercate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-
-                catech=position;
-
-                //parseevents();
-                optsel();
-                //Toast.makeText(getApplicationContext(), tempeve[0][2], Toast.LENGTH_SHORT).show();
-
-
-
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-
-
-                optsel();
-
-            }
-        });
+            
     }
 
 
