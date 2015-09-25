@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -102,16 +103,17 @@ public class RegisterActivity extends Activity {
         };
         branch = new String[]{
                 "CSE",
+                "CHEM",
                 "IT",
                 "ECE",
                 "EEE",
                 "EIE",
                 "ICE",
-                "Mech",
-                "Prod",
-                "Auto",
-                "Civil",
-                "Arch",
+                "MECH",
+                "PROD",
+                "AUTO",
+                "CIVIL",
+                "ARCH",
                 "Aero",
                 "Bio",
                 "Arts",
@@ -704,7 +706,7 @@ public class RegisterActivity extends Activity {
         //dropdown.setThreshold(1);
         //dropdown.setAdapter(adapter);
     }
-    public  void callAlert(String[] array,String desc,final int t){
+    public  void callAlert(String[] array,String desc,final int t) {
         // strName = "";
 
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(
@@ -713,74 +715,106 @@ public class RegisterActivity extends Activity {
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 RegisterActivity.this,
                 android.R.layout.select_dialog_singlechoice);
-        for(int i=0;i<array.length;i++)
-            arrayAdapter.add(array[i]);
+        if (array!= null) {
+            for (int i = 0; i < array.length; i++)
+                arrayAdapter.add(array[i]);
 
-        builderSingle.setNegativeButton("cancel",
-                new DialogInterface.OnClickListener() {
+            builderSingle.setNegativeButton("cancel",
+                    new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            if(college_string==null)collegeButton.setError("Choose college");
+                            if((degree_string==null)||(degree_string.equals("Select Degree")))degreeButton.setError("Choose Degree");
+                            else Log.e("TAG",degree_string);
+                            if(branch_string==null)branchButton.setError("Choose Branch");
+                            if(year_string==null)yearButton.setError("Choose year");
 
-        builderSingle.setAdapter(arrayAdapter,
-                new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        strName = arrayAdapter.getItem(which);
-                        switch(t){
-                            case 1: college_string=strName;
-                                collegeButton.setText(strName);
-                                break;
-                            case 2:   degree_string=strName;
-                                degreeButton.setText(strName);
-                                break;
-                            case 3:  branch_string=strName;
-                                branchButton.setText(strName);
-                                break;
-                            case 4:  year_string=strName;
-                                yearButton.setText(strName);
-                                break;
+
                         }
-                        System.out.println(t);
+                    });
+
+            builderSingle.setAdapter(arrayAdapter,
+                    new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            strName = arrayAdapter.getItem(which);
+                            switch (t) {
+                                case 1:
+                                    college_string = strName;
+                                    collegeButton.setText(strName);
+                                    break;
+                                case 2:
+                                    degree_string = strName;
+                                    degreeButton.setText(strName);
+                                    break;
+                                case 3:
+                                    branch_string = strName;
+                                    branchButton.setText(strName);
+                                    break;
+                                case 4:
+                                    year_string = strName;
+                                    yearButton.setText(strName);
+                                    break;
+                            }
+                            System.out.println(t);
 
 
-                    }
-                });
-        builderSingle.show();
-        // return strName;
-    }
-    public void callList(View V){
-        callAlert(items, "Select your college:", 1);
-        if(college_string!=null) {
-
-
-
-            if (college_string.length() != 0)
-                collegeButton.setError(null);
-            if (college_string.length() <= 7) college_not_present.setError("Enter College");
+                        }
+                    });
+            builderSingle.show();
+            // return strName;
         }
     }
-    public void callDegree(View view){
-        callAlert(degree, "Select Degree",2);
-        degree_string=strName;
-        if(degree_string.length()!=0)
-            degreeButton.setError(null);
+    public void callList(View V){
+
+        collegeButton.setError(null);
+        callAlert(items, "Select your college:", 1);
+        college_string=strName;
+        if(college_string==null)collegeButton.setError("Choose College");
+        if(college_string!=null) {
+            collegeButton.setError(null);
+            if (college_string.length() != 0)
+                collegeButton.setError(null);
+            if (college_string.equals("Others")) college_not_present.setError("Enter College");
+        }
     }
-    public void callBranch(View view){
-        callAlert(branch, "Select your branch",3);
-        branch_string=strName;
-        if(branch_string.length()!=0)
-            branchButton.setError(null);
+    public void callDegree(View view) {
+
+        callAlert(degree, "Select Degree", 2);
+        degree_string = strName;
+        if((college_string!=null)&&(degree_string.equals(college_string)))degreeButton.setError("Choose Degree");
+        else if (degree_string!= null) {
+            if (degree_string.length() != 0)
+                degreeButton.setError(null);
+        }
     }
-    public void callYear(View view){
-        callAlert(year,"Select your year",4);
-        year_string=strName;
-        if(year_string.length()!=0)
-            yearButton.setError(null);
+    public void callBranch(View view) {
+
+        callAlert(branch, "Select your branch", 3);
+        branch_string = strName;
+        if ((branch_string != null) && (degree_string != null) && (college_string != null)) {
+            if ((branch_string.equals(degree_string))||(branch_string.equals(college_string)))branchButton.setError("Choose branch");
+            else  if (branch_string != null) {
+                    if (branch_string.length() != 0)
+                        branchButton.setError(null);
+                }
+        }
+    }
+    public void callYear(View view) {
+
+        callAlert(year, "Select your year", 4);
+        year_string = strName;
+        if ((branch_string != null) && (degree_string != null) && (college_string != null) && (year_string != null)) {
+            if((year_string.equals(college_string))||(year_string.equals(degree_string))||(year_string.equals(branch_string)))yearButton.setError("Choose year");
+            if (year_string != null) {
+                if (year_string.length() != 0)
+                    yearButton.setError(null);
+            }
+        }
     }
 
     @Override
@@ -807,7 +841,11 @@ public class RegisterActivity extends Activity {
         else if(repassword.length()==0)repassword_text.setError("Retype password");
         else if(!password.equals(repassword))repassword_text.setError("Password not match");
         else if(fullname.length()==0)fullname_text.setError("Invalid fullname");
-        else if((college_string.length()==0)&&(college_not.length()==0))collegeButton.setError("Choose college");
+        else if(college_string==null)collegeButton.setError("Choose college");
+        else if(degree_string==null)degreeButton.setError("Choose Degree");
+        else if(branch_string==null)branchButton.setError("Choose Branch");
+        else if(year_string==null)yearButton.setError("Choose year");
+        else if(((college_string.length()==0)&&(college_not.length()==0)))collegeButton.setError("Choose college");
         else if((college_string.equals("Others"))&&(college_not.length()==0)){
             collegeButton.setError(null);
             college_not_present.setError("Enter college");

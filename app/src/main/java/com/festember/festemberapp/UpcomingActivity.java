@@ -475,7 +475,7 @@ public void netparse(String response)
             @Override
             public void onClick(View view) {
                 Intent i=new Intent(UpcomingActivity.this,Notify.class);
-                UpcomingActivity.this.startActivity(i);
+                startActivity(i);
 
 
             }
