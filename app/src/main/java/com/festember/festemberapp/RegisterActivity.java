@@ -727,7 +727,6 @@ public class RegisterActivity extends Activity {
                             dialog.dismiss();
                             if(college_string==null)collegeButton.setError("Choose college");
                             if((degree_string==null)||(degree_string.equals("Select Degree")))degreeButton.setError("Choose Degree");
-                            else Log.e("TAG",degree_string);
                             if(branch_string==null)branchButton.setError("Choose Branch");
                             if(year_string==null)yearButton.setError("Choose year");
 
@@ -760,7 +759,6 @@ public class RegisterActivity extends Activity {
                                     yearButton.setText(strName);
                                     break;
                             }
-                            System.out.println(t);
 
 
                         }

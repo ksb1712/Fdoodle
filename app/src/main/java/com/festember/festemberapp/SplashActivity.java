@@ -103,7 +103,7 @@ public class SplashActivity extends Activity {
             @Override
             public void run() {
 
-                if (i<33||loading) Startmonotomy((i + 1));
+                if (i<16) Startmonotomy((i + 1));
                 else {
                     bm.setText(o);
                     state5();
